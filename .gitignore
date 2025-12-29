@@ -26,7 +26,11 @@ project/project/
 # Bloop / Metals / BSP
 .bloop/
 .metals/
+
 .bsp/
+*.class
+*.jar
+
 
 # IDE
 .vscode/
