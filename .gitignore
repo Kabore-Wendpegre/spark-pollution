@@ -16,3 +16,24 @@ project/project/
 
 # OS
 .DS_Store
+
+
+# Scala / SBT
+target/
+project/target/
+project/project/
+
+# Bloop / Metals / BSP
+.bloop/
+.metals/
+.bsp/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
