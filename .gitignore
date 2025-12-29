@@ -1,0 +1,18 @@
+# Scala / SBT
+target/
+project/target/
+project/project/
+
+# Metals / BSP
+.metals/
+.bsp/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store

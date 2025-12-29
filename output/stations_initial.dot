@@ -1,0 +1,21 @@
+digraph Stations {
+  label = "Stations - Graphe initial";
+  labelloc = "t";
+  fontsize = 18;
+
+  node [shape=circle, style=filled, fillcolor="#87CEEB", fontname="Helvetica"];
+  edge [fontname="Helvetica"];
+
+  4 [label="4\nApres-midi (13–18h)\n83,52"];
+  1 [label="1\nNuit (0–4h)\n104,88"];
+  3 [label="3\nMilieu de journee (9–12h)\n87,65"];
+  5 [label="5\nSoir (19–23h)\n101,93"];
+  2 [label="2\nMatin (5–8h)\n92,64"];
+
+  1 -> 2 [label="1.0"];
+  2 -> 3 [label="1.0"];
+  3 -> 4 [label="1.0"];
+  4 -> 5 [label="1.0"];
+  1 -> 3 [label="0.5"];
+  3 -> 5 [label="0.5"];
+}
