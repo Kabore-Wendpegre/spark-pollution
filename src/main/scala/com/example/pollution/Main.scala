@@ -107,7 +107,7 @@ object Main {
       .orderBy("hour")
       .collect()
 
-    // ---- Graphique pollution moyenne par heure ----
+   
 
     
 
