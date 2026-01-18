@@ -45,8 +45,8 @@ object GraphAnalysis {
     val stationDf = df
       .withColumn(
         "station_id",
-        when(col("hour") <= 4, lit(1L))   // 0–4h  -> station 1 : Nuit
-          .when(col("hour") <= 8, lit(2L))  // 5–8h  -> station 2 : Matin
+        when(col("hour") <= 4, lit(1L))   // 0–4h  -> station 1 : Nuit 1L veut dire Long 1 i.e un entier 64 bits
+          .when(col("hour") <= 8, lit(2L))  // 5–8h  -> station 2 : Matin 2L veut dire Long 2 i.e un entier 64 bits, le 2 est important pour GraphX car les VertexId sont des Long
           .when(col("hour") <= 12, lit(3L)) // 9–12h -> station 3 : Milieu de journée
           .when(col("hour") <= 18, lit(4L)) // 13–18h -> station 4 : Après-midi
           .otherwise(lit(5L))               // 19–23h -> station 5 : Soir

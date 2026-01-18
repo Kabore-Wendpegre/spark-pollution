@@ -11,6 +11,11 @@ import org.knowm.xchart.{XYChartBuilder, CategoryChartBuilder, SwingWrapper}
 import org.apache.hadoop.shaded.com.google.common.graph.Graph
 import java.awt.{Desktop => allMetrics}
 
+// //Import pourle BoxPlot
+// import org.knowm.xchart.{BoxChartBuilder}
+// import scala.jdk.CollectionConverters._
+// import scala.util.Try
+
 
 
 
@@ -66,6 +71,8 @@ object Main {
 
 
 
+ 
+
       //convertissons la colonne date en timestamp
       val dfTS = dfImpute.withColumn("timestamp",to_timestamp(col("date"), "yyyy-MM-dd HH:mm:ss"))
       println("aperçu des donnees avec date en timestamp")
@@ -88,6 +95,58 @@ object Main {
             .when(col("pollution") < 100, "Medium")
             .otherwise("High")
         )
+
+      // // ----- BOX PLOT pour détecter les valeurs aberrantes -----
+
+      // val sampleFrac = 0.2
+      // val dfSample = dfFinal.sample(withReplacement = false, fraction = sampleFrac, seed = 42)
+
+      // // Récupération en local de la colonne pollution (Double)
+      // val pollutionValues: java.util.List[java.lang.Double] =
+      //   dfSample.select(col("pollution").cast("double").alias("pollution"))
+      //     .na.drop()
+      //     .collect()
+      //     .flatMap(r => Try(r.getAs[Double]("pollution")).toOption) // <- getAs avec nom + type
+      //     .map(d => java.lang.Double.valueOf(d))                    // <- remplace Double.box
+      //     .toList
+      //     .asJava
+
+      // val boxChart = new BoxChartBuilder()
+      //   .width(900)
+      //   .height(600)
+      //   .title(s"Boxplot de la pollution (sample ${ (sampleFrac*100).toInt }%)")
+      //   .xAxisTitle("Variable")
+      //   .yAxisTitle("Pollution")
+      //   .build()
+
+      // boxChart.addSeries("pollution", pollutionValues)
+      // new SwingWrapper(boxChart).displayChart()
+
+
+      // // ----- OUTLIERS via IQR (Spark) -----
+      // val qs = dfFinal.select(col("pollution").cast("double").alias("pollution"))
+      //   .stat
+      //   .approxQuantile("pollution", Array(0.25, 0.75), 0.01)
+
+      // val q1 = qs(0)
+      // val q3 = qs(1)
+      // val iqr = q3 - q1
+
+      // val lower = q1 - 1.5 * iqr
+      // val upper = q3 + 1.5 * iqr
+
+      // println(f"Q1=$q1%.2f, Q3=$q3%.2f, IQR=$iqr%.2f, lower=$lower%.2f, upper=$upper%.2f")
+
+      // val outliers = dfFinal
+      //   .withColumn("pollution_d", col("pollution").cast("double"))
+      //   .filter(col("pollution_d") < lower || col("pollution_d") > upper)
+
+      // println(s"Nombre d'outliers (IQR) : ${outliers.count()}")
+
+      // outliers
+      //   .select("date", "pollution", "temp", "dew", "press", "wnd_spd")
+      //   .orderBy(desc("pollution"))
+      //   .show(20, truncate = false)
 
       
 
@@ -113,15 +172,17 @@ object Main {
 
 
     // ---- Graphique pollution moyenne par heure ----
+    // Récupération des données pour le graphique en faisant une agrégation par heure
+    //aggreagation c'est comme un groupBy + une fonction d'agrégation (moyenne ici)
     val pollutionPerHour = dfFinal
       .groupBy("hour")
       .agg(avg("pollution").alias("avg_pollution"))
       .orderBy("hour")
       .collect()
-
+// Récupération des heures et des moyennes dans des listes Java
     val hours    = pollutionPerHour.map(_.getInt(0)).map(Int.box).toList.asJava
     val averages = pollutionPerHour.map(_.getDouble(1)).map(Double.box).toList.asJava
-
+// Création du graphique avec XChart avec les données récupérées et affichage
     val chart = new XYChartBuilder()
       .width(800)
       .height(600)
@@ -136,7 +197,7 @@ object Main {
 
     
     println("Graphique 1 : appuie sur Entree pour continuer…")
-    StdIn.readLine()
+    StdIn.readLine() //attente d'une entrée utilisateur pour continuer
 
     // ---- Graphique pollution moyenne par mois ----
     val pollutionPerMonth = dfFinal
